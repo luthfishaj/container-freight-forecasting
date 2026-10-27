@@ -1,0 +1,34 @@
+# ---------------------------------------------------------------
+# Workflow: ci.yml
+# Purpose: Installs the locked environment on a clean Linux machine
+#          and runs the linter and the unit tests on every push to
+#          main and on every pull request.
+# ---------------------------------------------------------------
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10.3.2
+
+      # --locked stops the job if uv.lock does not match pyproject.toml,
+      # so the CI always tests the exact versions that were committed.
+      - name: Install Python and dependencies
+        run: uv sync --locked
+
+      - name: Lint
+        run: make lint
+
+      - name: Test
+        run: make test

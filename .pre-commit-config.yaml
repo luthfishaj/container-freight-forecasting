@@ -1,0 +1,32 @@
+# ---------------------------------------------------------------
+# File: .pre-commit-config.yaml
+# Purpose: Checks that run automatically before each commit, once
+#          the hook is installed with `uv run pre-commit install`.
+# ---------------------------------------------------------------
+
+repos:
+  # General file checks from the official pre-commit repository.
+  # The size limit stops data files from being committed by mistake.
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-yaml
+      - id: check-added-large-files
+        args: ["--maxkb=1000"]
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+
+  # Ruff is called through uv so that the hook uses the same ruff
+  # version as `make lint` and the CI, taken from uv.lock.
+  - repo: local
+    hooks:
+      - id: ruff-check
+        name: ruff check
+        entry: uv run ruff check --fix
+        language: system
+        types: [python]
+      - id: ruff-format
+        name: ruff format
+        entry: uv run ruff format
+        language: system
+        types: [python]

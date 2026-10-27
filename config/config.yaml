@@ -1,0 +1,49 @@
+# ---------------------------------------------------------------
+# File: config/config.yaml
+# Purpose: Central settings for the project. Scripts read values
+#          from this file instead of writing them in the code.
+# ---------------------------------------------------------------
+
+# Start of the modelling period. There is no fixed end date: each run
+# uses the latest week available in the data. If a key source starts
+# later, the common start date is changed here and recorded in
+# docs/decisions.md.
+start_date: "2018-01-01"
+
+# Target lanes in priority order. The example routes are indicative;
+# the exact route depends on the rate index selected in Phase 2.
+lanes:
+  - id: asia_north_europe
+    name: Asia - North Europe
+    example_route: Shanghai - Rotterdam
+  - id: asia_mediterranean
+    name: Asia - Mediterranean
+    example_route: Shanghai - Genoa
+  - id: asia_persian_gulf
+    name: Asia - Persian Gulf
+    example_route: Shanghai - Dubai (Jebel Ali)
+  - id: asia_us_west_coast
+    name: Asia - US West Coast
+    example_route: Shanghai - Los Angeles
+
+# Forecast horizons, in weeks ahead of the forecast origin.
+horizons: [1, 2, 4, 8, 12]
+
+# Quantile levels of the prediction intervals. The 0.1 and 0.9
+# quantiles bound an 80% interval; 0.5 is the median forecast.
+quantiles: [0.1, 0.5, 0.9]
+
+# Seed shared by every step that involves randomness, so that results
+# can be reproduced exactly.
+random_seed: 42
+
+# Folder and file locations, relative to the project root.
+paths:
+  raw_data: data/raw
+  manual_data: data/raw/manual
+  interim_data: data/interim
+  processed_data: data/processed
+  warehouse: warehouse/hff.duckdb
+  sql: sql
+  figures: reports/figures
+  forecasts: reports/forecasts
