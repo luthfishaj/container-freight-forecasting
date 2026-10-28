@@ -2,40 +2,206 @@
 # File: config/config.yaml
 # Purpose: Central settings for the project. Scripts read values
 #          from this file instead of writing them in the code.
+#
+# Notation used in comments across the project:
+#   l                    lane, for example Asia - Middle East
+#   t                    week; t + 1 is the following week
+#   h                    forecast horizon, in weeks ahead of week t
+#   r[l, t]              freight rate index on lane l in week t
+#                        (NCFI index points)
+#   y[l, t]              log(r[l, t]), the natural logarithm of the
+#                        rate; this is the modelling target
+#   y_hat[l, t+h | t]    forecast of y[l, t+h] made in week t, using
+#                        only information published by week t
+#   q_hat_alpha[l, t+h | t]
+#                        forecast quantile at level alpha: the value
+#                        that y[l, t+h] is expected to stay below with
+#                        probability alpha
+#   x[k, t]              value of driver k in week t (Brent crude
+#                        price, Gulf port calls, geopolitical risk)
+#
+# Rates are modelled as logarithms because they are always positive
+# and move in percentages: y[l, t+1] - y[l, t] is close to the
+# percentage change of the rate, whatever its level or unit.
+# Forecasts are converted back to index points with r = exp(y).
 # ---------------------------------------------------------------
 
-# Start of the modelling period. There is no fixed end date: each run
-# uses the latest week available in the data. If a key source starts
-# later, the common start date is changed here and recorded in
-# docs/decisions.md.
-start_date: "2018-01-01"
+# Start of the modelling period: the first week with an available
+# NCFI data sheet. There is no fixed end date: each run uses the
+# latest week available in the data.
+start_date: "2019-03-01"
 
-# Target lanes in priority order. The example routes are indicative;
-# the exact route depends on the rate index selected in Phase 2.
+# Target series: the Ningbo Containerized Freight Index (NCFI),
+# published every Friday by the Ningbo Shipping Exchange in index
+# points. Rates are export rates from Ningbo and include ocean freight
+# plus bunker, peak season and war risk surcharges.
+#
+# Lanes l. Each lane maps to one route of the NCFI data sheet
+# (ncfi_route must match the route name printed in the sheet).
+# The main lane gets the full analysis (drivers, stress test,
+# scenarios, pricing). Comparison lanes are modelled with the same
+# pipeline; they show whether a move is specific to the Gulf or
+# shared by the whole market.
 lanes:
+  - id: asia_middle_east
+    name: Asia - Middle East
+    ncfi_route: Middle East
+    ports: Ningbo - Dammam / Dubai
+    role: main
   - id: asia_north_europe
     name: Asia - North Europe
-    example_route: Shanghai - Rotterdam
-  - id: asia_mediterranean
-    name: Asia - Mediterranean
-    example_route: Shanghai - Genoa
-  - id: asia_persian_gulf
-    name: Asia - Persian Gulf
-    example_route: Shanghai - Dubai (Jebel Ali)
+    ncfi_route: Europe
+    ports: Ningbo - Hamburg / Rotterdam
+    role: comparison
+  - id: asia_west_mediterranean
+    name: Asia - West Mediterranean
+    ncfi_route: W. Mediterranean
+    ports: Ningbo - Barcelona / Valencia / Genoa
+    role: comparison
   - id: asia_us_west_coast
     name: Asia - US West Coast
-    example_route: Shanghai - Los Angeles
+    ncfi_route: W. America
+    ports: Ningbo - Los Angeles / Long Beach / Oakland
+    role: comparison
 
-# Forecast horizons, in weeks ahead of the forecast origin.
+# Forecast horizons h, in weeks ahead of the forecast origin t.
+# Short horizons (1-4) support weekly quote decisions; longer ones
+# (8-12) support contract vs spot timing and surcharge reviews.
 horizons: [1, 2, 4, 8, 12]
 
-# Quantile levels of the prediction intervals. The 0.1 and 0.9
-# quantiles bound an 80% interval; 0.5 is the median forecast.
+# Quantile levels alpha of the prediction intervals. The 0.1 and 0.9
+# quantiles bound an 80% interval: if the intervals are well
+# calibrated, about 80% of actual rates fall inside them. The 0.5
+# quantile is the median forecast.
 quantiles: [0.1, 0.5, 0.9]
 
 # Seed shared by every step that involves randomness, so that results
 # can be reproduced exactly.
 random_seed: 42
+
+# ---------------------------------------------------------------
+# Weekly panel (Phase 3)
+# ---------------------------------------------------------------
+# Past values of y used as features: y_lag_k = y[l, t-k].
+target_lags: [1, 2, 4, 8, 12, 26, 52]
+
+# Windows, in weeks, for the rolling mean and standard deviation of
+# the weekly change y[l, t] - y[l, t-1] (momentum and volatility).
+rolling_windows: [4, 12]
+
+# Publication lag of each driver, in weeks. The weekly value of a
+# driver for week t is used only from week t + lag, when it has been
+# published:
+#   brent_usd   EIA updates the series weekly (about one week late)
+#   gprd        daily index, refreshed within days
+#   port calls  PortWatch updates weekly, about 11 days late, so the
+#               last complete week known on a Friday is two weeks old
+driver_lag_weeks:
+  brent_usd: 1
+  gprd: 1
+  gulf_container_calls: 2
+  ningbo_container_calls: 2
+
+# Shock periods S_COVID, S_RedSea, S_Hormuz, dated by the Friday of
+# the first and last NCFI week they cover (end null = still going).
+# Start dates come from data/events.csv; the reasons for each start
+# and end are recorded in the decision log. Model features use only
+# the start dates (a shock is known to have started, not when it will
+# end); the full periods label the weeks for evaluation.
+shock_periods:
+  covid:
+    start: "2020-03-13"
+    end: "2022-12-30"
+  red_sea:
+    start: "2023-12-15"
+    end: "2026-02-27"
+  hormuz:
+    start: "2026-03-06"
+    end: null
+
+# First day of the Chinese New Year (lunar calendar), source:
+# https://www.timeanddate.com/calendar/chinese-zodiac-signs.html
+# Factories close for one to two weeks around this date, so export
+# demand rises before it and falls after it.
+chinese_new_year:
+  - "2019-02-05"
+  - "2020-01-25"
+  - "2021-02-12"
+  - "2022-02-01"
+  - "2023-01-22"
+  - "2024-02-10"
+  - "2025-01-29"
+  - "2026-02-17"
+  - "2027-02-06"
+# Number of weeks before and after the holiday flagged as the
+# pre-holiday rush and the post-holiday lull.
+chinese_new_year_window_weeks: 3
+
+# ---------------------------------------------------------------
+# Backtest (Phase 5 onward)
+# ---------------------------------------------------------------
+# Weeks of history before the first forecast origin. One year is the
+# minimum for the seasonal naive forecast, which repeats the value of
+# 52 weeks earlier.
+backtest_warm_up_weeks: 52
+
+# Order (p, d, q) of the ARIMA baseline on the log rate: one
+# autoregressive term on the weekly changes (d = 1), no moving average.
+# The SARIMAX driver model (Phase 6) uses the same order.
+arima_order: [1, 1, 0]
+
+# ---------------------------------------------------------------
+# Driver models (Phase 6)
+# ---------------------------------------------------------------
+# The LightGBM models are refitted every 4 weekly origins (about once
+# a month) instead of every week, which cuts the running time by four
+# while keeping the expanding-window rule.
+retrain_every_weeks: 4
+
+# LightGBM settings, fixed in advance rather than tuned, to avoid
+# fitting the settings themselves to the test weeks. Small trees and
+# a slow learning rate suit a few hundred training rows per horizon.
+lightgbm:
+  n_estimators: 300
+  learning_rate: 0.03
+  num_leaves: 15
+  min_child_samples: 20
+  subsample: 0.8
+  subsample_freq: 1
+  colsample_bytree: 0.8
+  verbose: -1
+
+# ---------------------------------------------------------------
+# Scenarios (Phase 9): assumed driver paths for the next 12 weeks
+# ---------------------------------------------------------------
+# These are assumptions, not forecasts. Each driver moves in a
+# straight line from its latest known value to the target over the
+# given number of weeks, then stays flat.
+#   reopening   drivers return to their average of the 26 weeks
+#               before the Hormuz closure
+#   status_quo  drivers stay at their latest known values
+#   escalation  Gulf port calls halve again, Brent +25%, GPR +30%
+# explorer_grid: target values combined in every possible way for the
+# dashboard's scenario explorer (5 x 4 x 5 = 100 driver paths), so the
+# dashboard reads precomputed results and never needs the raw data.
+scenarios:
+  weeks_to_target: 8
+  pre_shock_reference_weeks: 26
+  escalation:
+    gulf_container_calls_factor: 0.5
+    brent_usd_factor: 1.25
+    gprd_factor: 1.3
+  explorer_grid:
+    brent_usd: [60, 80, 100, 125, 150]
+    gprd: [100, 150, 200, 300]
+    gulf_container_calls: [0, 25, 50, 75, 110]
+
+# ---------------------------------------------------------------
+# Pricing illustration (Phase 10)
+# ---------------------------------------------------------------
+# Weekly decision on the main lane, from the carrier's side (D-010):
+# fix the current rate for the next 4 weeks, or stay on spot.
+pricing_lock_weeks: 4
 
 # Folder and file locations, relative to the project root.
 paths:
@@ -43,6 +209,8 @@ paths:
   manual_data: data/raw/manual
   interim_data: data/interim
   processed_data: data/processed
+  panel: data/processed/panel.parquet
+  manifest: data/raw/manifest.csv
   warehouse: warehouse/hff.duckdb
   sql: sql
   figures: reports/figures

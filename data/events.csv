@@ -1,0 +1,13 @@
+date,event,category,source_url
+2020-03-11,The World Health Organization characterises COVID-19 as a pandemic,pandemic,https://www.who.int/news-room/speeches/item/who-director-general-s-opening-remarks-at-the-media-briefing-on-covid-19---11-march-2020
+2021-03-23,Container ship Ever Given grounds and blocks the Suez Canal for six days; refloated on 29 March 2021,canal_blockage,https://www.seatrade-maritime.com/containers/ever-given-blocking-suez-canal-re-floated
+2023-12-15,Maersk and Hapag-Lloyd pause Red Sea transits after attacks on commercial ships,red_sea,https://www.marinelog.com/news/maersk-red-sea-transits-paused/
+2023-12-16,CMA CGM and MSC suspend Red Sea transits,red_sea,https://maritime-executive.com/article/msc-and-cma-cgm-suspend-red-sea-transits-as-us-and-uk-down-multiple-drones
+2026-02-28,Military conflict in the Gulf begins; the Strait of Hormuz closes to most commercial traffic and major container lines suspend Hormuz crossings and Gulf bookings,hormuz,https://en.wikipedia.org/wiki/2026_Strait_of_Hormuz_campaign
+2026-04-08,Ceasefire declared; the Strait of Hormuz becomes partially operational,hormuz,https://www.newsonair.gov.in/ceasefire-brings-temporary-relief-in-gulf-strait-of-hormuz-partially-operational
+2026-04-13,Naval blockade of Iranian ports begins,hormuz,https://en.wikipedia.org/wiki/2026_Strait_of_Hormuz_campaign
+2026-06-18,Reopening of the Strait of Hormuz announced (resumption of traffic not confirmed),hormuz,https://en.wikipedia.org/wiki/2026_Strait_of_Hormuz_campaign
+2026-07-08,Interim truce ends after attacks on commercial ships in the strait,hormuz,https://en.wikipedia.org/wiki/2026_Strait_of_Hormuz_campaign
+2026-07-14,Naval blockade of Iranian ports reinstated,hormuz,https://en.wikipedia.org/wiki/2026_Strait_of_Hormuz_campaign
+2026-08-25,Traffic Separation Scheme in the Strait of Hormuz reported cleared of mines,hormuz,https://en.wikipedia.org/wiki/2026_Strait_of_Hormuz_campaign
+2026-10-14,Container ship sinks in the Strait of Hormuz during the month with the most attacks on ships since February,hormuz,https://www.cnbc.com/2026/10/14/container-ship-sinks-strait-hormuz-as-iran-war-attacks.html

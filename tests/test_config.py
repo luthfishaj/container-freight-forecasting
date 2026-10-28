@@ -22,6 +22,21 @@ def test_lane_ids_are_unique():
     assert len(lane_ids) == len(set(lane_ids))
 
 
+def test_exactly_one_main_lane():
+    config = load_config()
+    main_lanes = []
+    for lane in config["lanes"]:
+        if lane["role"] == "main":
+            main_lanes.append(lane["id"])
+    assert main_lanes == ["asia_middle_east"]
+
+
+def test_every_lane_has_an_ncfi_route():
+    config = load_config()
+    for lane in config["lanes"]:
+        assert lane["ncfi_route"] != ""
+
+
 def test_horizons_are_positive_and_sorted():
     config = load_config()
     horizons = config["horizons"]

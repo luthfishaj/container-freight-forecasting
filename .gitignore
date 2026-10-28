@@ -42,6 +42,10 @@ data/processed/*
 warehouse/*
 !warehouse/.gitkeep
 
-# Experiment tracking (MLflow local file store)
+# Experiment tracking (MLflow: SQLite store and artifact folder)
 mlruns/
 mlartifacts/
+mlflow.db
+
+# Streamlit secrets (never committed; the dashboard needs none)
+.streamlit/secrets.toml
