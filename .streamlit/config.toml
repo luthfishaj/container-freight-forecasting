@@ -1,0 +1,14 @@
+# Streamlit settings for the dashboard ("make dashboard").
+# Theme colours follow src/hff/charts.py: light surface, near-black
+# text, the main lane's blue as the accent colour.
+
+[theme]
+base = "light"
+primaryColor = "#2a78d6"
+backgroundColor = "#fcfcfb"
+secondaryBackgroundColor = "#f0efec"
+textColor = "#0b0b0b"
+
+[browser]
+# No usage statistics are sent to Streamlit.
+gatherUsageStats = false
