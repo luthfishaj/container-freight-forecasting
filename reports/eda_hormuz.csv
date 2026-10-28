@@ -1,0 +1,5 @@
+lane_id,reference_week,change_week_before_closure_pct,latest_week,change_to_latest_pct,peak_change_pct,peak_week
+asia_middle_east,2026-02-20,82.2,2026-10-23,773.7,822.8,2026-08-28
+asia_north_europe,2026-02-20,3.9,2026-10-23,59.7,161.0,2026-06-26
+asia_west_mediterranean,2026-02-20,1.6,2026-10-23,44.5,125.0,2026-06-26
+asia_us_west_coast,2026-02-20,9.2,2026-10-23,307.4,322.2,2026-09-18

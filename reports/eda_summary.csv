@@ -1,0 +1,17 @@
+lane_id,period,weeks_published,mean_weekly_change_pct,volatility_pct,change_over_period_pct
+asia_middle_east,calm,102,0.68,12.01,
+asia_middle_east,covid,147,-0.14,14.56,-18.9
+asia_middle_east,hormuz,34,4.61,15.81,379.4
+asia_middle_east,red_sea,114,0.23,16.23,29.7
+asia_north_europe,calm,102,-0.11,9.14,
+asia_north_europe,covid,147,0.09,10.77,13.9
+asia_north_europe,hormuz,34,1.27,8.24,53.8
+asia_north_europe,red_sea,114,0.43,12.22,63.1
+asia_us_west_coast,calm,102,0.06,8.93,
+asia_us_west_coast,covid,147,-0.01,10.02,-2.0
+asia_us_west_coast,hormuz,34,3.87,7.57,272.9
+asia_us_west_coast,red_sea,114,0.18,18.95,22.9
+asia_west_mediterranean,calm,102,-0.24,7.79,
+asia_west_mediterranean,covid,147,0.42,9.66,85.7
+asia_west_mediterranean,hormuz,34,1.04,8.76,42.3
+asia_west_mediterranean,red_sea,114,0.37,11.58,52.0

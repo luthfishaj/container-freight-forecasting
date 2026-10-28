@@ -1,0 +1,13 @@
+lane_id,driver,coefficient,p_value
+asia_middle_east,log_brent,0.034,0.7913
+asia_middle_east,log_gprd,-0.003,0.9079
+asia_middle_east,log_gulf_calls,0.0225,0.6349
+asia_north_europe,log_brent,0.0354,0.7732
+asia_north_europe,log_gprd,0.0166,0.4552
+asia_north_europe,log_gulf_calls,-0.017,0.5246
+asia_us_west_coast,log_brent,0.1331,0.2417
+asia_us_west_coast,log_gprd,-0.002,0.9492
+asia_us_west_coast,log_gulf_calls,0.0171,0.4064
+asia_west_mediterranean,log_brent,0.0226,0.8204
+asia_west_mediterranean,log_gprd,0.0333,0.0543
+asia_west_mediterranean,log_gulf_calls,-0.0132,0.5614
